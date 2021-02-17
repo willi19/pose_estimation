@@ -2,40 +2,35 @@ data:
   H: 1080
   W: 1920
   num_keypoints: 24
-
-
 heatmap:
   sigma: 9
   H: 1080
   W: 1920
-
-
 model:
   size: 10
-
 train:
   accumulate: 1
   batch_size: 64
-  betas: [0.5, 0.9]
-  checkpoint_dir: 'checkpoints'
+  betas:
+  - 0.5
+  - 0.9
+  checkpoint_dir: checkpoints
   epochs: 1500
-  fast_dev_run: False
+  fast_dev_run: false
   gpus: 1
   lr: 0.0003
-  log_dir: 'logs'
-  name: 'test'
-  optim: 'adam'
+  log_dir: logs
+  name: test
+  optim: adam
   parallel_calls: 32
   resume: ''
-  sample: False
+  sample: false
   save_top_k: 3
   steps: 100
-  trace: False
-  valid_split: 3600
+  trace: false
+  valid_split: 1024
   version: 0
-  nun_workers : 5
-
 inference:
   length: 1
   path: ''
-  save_path: 'samples'
+  save_path: samples
