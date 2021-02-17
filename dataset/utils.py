@@ -14,8 +14,8 @@ class GenerateHeatmap():
         self.g = np.exp(- ((x - x0) ** 2 + (y - y0) ** 2) / (2 * sigma ** 2))
         self.H = cfg.heatmap.H
         self.W = cfg.heatmap.W
-
         
+
     def __call__(self, keypoints):
         hms = np.zeros(shape = (self.num_parts, self.output_res, self.output_res), dtype = np.float32)
         sigma = self.sigma
