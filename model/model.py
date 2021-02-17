@@ -4,15 +4,15 @@ import pytorch_lightning as pl
 
 from torch import optim
 
-from model.loss import GenericLoss, get_accuracy
-from model.core import CoreModel
+from model.loss import HeatmapLoss, get_accuracy
+from model.core import StakedHourGlass
 
-class BaseModel(pl.LightningModule):
+class SHRModel(pl.LightningModule):
     def __init__(self, cfg: DictConfig):
-        super(BaseModel, self).__init__()
+        super(SHRModel, self).__init__()
         self.cfg = cfg
-        self.loss = GenericLoss(cfg)
-        self.model = CoreModel(cfg)
+        self.loss = HeatmapLoss()
+        self.model = StakedHourGlass(cfg)
 
     def forward(self, x: torch.Tensor):
         return self.model(x)

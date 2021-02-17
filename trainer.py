@@ -5,13 +5,13 @@ from omegaconf import DictConfig
 from pytorch_lightning import Trainer, callbacks
 from pytorch_lightning import loggers as pl_loggers
 
-from model.model import BaseModel
-from dataset.dataset import BaseDataModule
+from model.model import SHRModel
+from dataset.dataset import KPDataModule
 
 @hydra.main(config_path=os.path.join('config', 'config.yaml'), strict=False)
 def main(cfg: DictConfig):
-    basemodel = BaseModel(cfg)
-    basedata = BaseDataModule(cfg)
+    model = SHRModel(cfg)
+    data = KPDataModule(cfg)
     logger = pl_loggers.TensorBoardLogger(save_dir=cfg.train.log_dir, version=cfg.train.version)
     checkpoint_callback = callbacks.ModelCheckpoint(
         monitor='val_loss',
@@ -19,7 +19,7 @@ def main(cfg: DictConfig):
         save_top_k=cfg.train.save_top_k
     )
     trainer = Trainer(
-        accelerator=None if platform.system() == 'Windows' else 'ddp',
+        accelerator=None,
         accumulate_grad_batches=cfg.train.accumulate,
         auto_scale_batch_size=True,
         callbacks=[checkpoint_callback],
@@ -32,7 +32,7 @@ def main(cfg: DictConfig):
         weights_save_path=cfg.train.checkpoint_dir
     )
 
-    trainer.fit(basemodel, datamodule=basedata)
+    trainer.fit(model, datamodule=data)
 
 if __name__ == '__main__':
     main()

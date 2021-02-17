@@ -5,23 +5,27 @@ data:
 
 
 heatmap:
-  sigma: 9
-  H: 1080
-  W: 1920
+  sigma: 4
+  H: 136
+  W: 240
 
 
 model:
-  size: 10
+  nstack : 4
+  in_dim : 32
+  out_dim: 24
+  increase: 0
+  depth: 3
 
 train:
   accumulate: 1
-  batch_size: 64
+  batch_size: 4
   betas: [0.5, 0.9]
   checkpoint_dir: 'checkpoints'
   epochs: 1500
   fast_dev_run: False
   gpus: 1
-  lr: 0.0003
+  lr: 0.001
   log_dir: 'logs'
   name: 'test'
   optim: 'adam'
