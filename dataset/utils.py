@@ -12,8 +12,10 @@ class GenerateHeatmap():
         y = x[:, np.newaxis]
         x0, y0 = 3*sigma + 1, 3*sigma + 1
         self.g = np.exp(- ((x - x0) ** 2 + (y - y0) ** 2) / (2 * sigma ** 2))
-        self.H = 
+        self.H = cfg.heatmap.H
+        self.W = cfg.heatmap.W
 
+        
     def __call__(self, keypoints):
         hms = np.zeros(shape = (self.num_parts, self.output_res, self.output_res), dtype = np.float32)
         sigma = self.sigma
