@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 class GenerateHeatmap():
     def __init__(self, cfg: DictConfig):
-        self.num_parts = cfg.data.num_parts
         self.sigma = cfg.heatmap.sigma
         size = 6*self.sigma + 3
         x = np.arange(0, size, 1, float)

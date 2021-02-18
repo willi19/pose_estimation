@@ -11,15 +11,15 @@ heatmap:
 
 
 model:
-  nstack : 4
-  in_dim : 32
+  nstack : 6
+  in_dim : 64
   out_dim: 24
   increase: 0
   depth: 3
 
 train:
   accumulate: 1
-  batch_size: 4
+  batch_size: 1
   betas: [0.5, 0.9]
   checkpoint_dir: 'checkpoints'
   epochs: 1500
@@ -37,9 +37,10 @@ train:
   trace: False
   valid_split: 3600
   version: 0
-  nun_workers : 5
+  num_workers : 5
 
 inference:
   length: 1
   path: ''
   save_path: 'samples'
+  checkpoint_path: 'outputs/2021-02-17/19-46-48/checkpoints/epoch=25-step=23399.ckpt'

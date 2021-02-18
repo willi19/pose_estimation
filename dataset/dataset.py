@@ -34,7 +34,7 @@ class KPDataset(Dataset):
     def __getitem__(self, idx):
         img = np.copy(self.get_image(self.db[idx]))
         if self.istest:
-            return torch.from_numpy(img).float()
+            return torch.from_numpy(img).float(), self.db[idx]
         else:
             hmp = self.heatmap(self.kypt[idx])
             return torch.from_numpy(img).float(), torch.from_numpy(hmp).float()
@@ -81,6 +81,7 @@ class KPDataModule(pl.LightningDataModule):
         self.keypoints = [[[d[2*i+1]/4, d[2*i+2]/4] for i in range(cfg.data.num_keypoints)] for d in data]    #index 0 is name of image
         self.train_keypoints = self.keypoints[:self.split_len]
         self.valid_keypoints = self.keypoints[self.split_len:]
+        self.setup()
 
     def get_relative(self, path):
         return os.path.join(get_original_cwd(),path)
