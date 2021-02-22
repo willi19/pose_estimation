@@ -50,10 +50,11 @@ class StakedHourGlass(nn.Module):
         self.merge_preds = nn.ModuleList( [Merge(oup_dim, inp_dim) for i in range(nstack-1)] )
         self.nstack = nstack
 
+
     def forward(self, imgs):
         ## our posenet
         x = imgs.permute(0, 3, 1, 2) #x of size batch,3,H,W
-        x = self.pre(x)              #batch, 256, 480, 270
+        x = self.pre(x)              #batch, 64, 200, 200
         combined_hm_preds = []
         for i in range(self.nstack):
             hg = self.hgs[i](x)

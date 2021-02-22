@@ -39,7 +39,7 @@ class GenerateHeatmap():
 @hydra.main(config_path=os.path.join('../config', 'config.yaml'), strict=False)
 def main(cfg : DictConfig):
     ghm = GenerateHeatmap(cfg)
-    heatmap = ghm([[[100,200]]])
+    heatmap = ghm([[100,200]])
     plt.imshow(heatmap[0])
     plt.show()
 

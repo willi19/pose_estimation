@@ -5,9 +5,9 @@ data:
 
 
 heatmap:
-  sigma: 4
-  H: 136
-  W: 240
+  sigma: 2
+  H: 400
+  W: 400
 
 
 model:
@@ -37,7 +37,7 @@ train:
   trace: False
   valid_split: 3600
   version: 0
-  num_workers : 5
+  num_workers : 15
 
 inference:
   length: 1

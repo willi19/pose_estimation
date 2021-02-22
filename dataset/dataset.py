@@ -10,6 +10,7 @@ import hydra
 from hydra.utils import get_original_cwd
 import matplotlib.pyplot as plt
 import torch
+import random
 
 class KPDataset(Dataset):
     def __init__(self, istest, cfg: DictConfig, db, kypt = None):    
@@ -26,18 +27,19 @@ class KPDataset(Dataset):
 
     def get_image(self, img_name):
         if self.istest:
-            return np.asarray(Image.open(self.get_relative('test_imgs/')+img_name).resize((self.cfg.heatmap.W, self.cfg.heatmap.H)))
+            return np.asarray(Image.open(self.get_relative('test_imgs/')+img_name))
         else:
-            return np.asarray(Image.open(self.get_relative('train_imgs/')+img_name).resize((self.cfg.heatmap.W, self.cfg.heatmap.H)))    
+            return np.asarray(Image.open(self.get_relative('train_crop/')+img_name))    
         
         
     def __getitem__(self, idx):
-        img = np.copy(self.get_image(self.db[idx]))
+        img_name = self.db[idx]
+        img = np.copy(self.get_image(img_name))
         if self.istest:
-            return torch.from_numpy(img).float(), self.db[idx]
+            return torch.from_numpy(img).half(), self.db[idx]
         else:
-            hmp = self.heatmap(self.kypt[idx])
-            return torch.from_numpy(img).float(), torch.from_numpy(hmp).float()
+            hmp = self.heatmap(self.kypt[img_name])
+            return torch.from_numpy(img).half(), torch.from_numpy(hmp).half()
 
     def __len__(self):
         return len(self.db)
@@ -60,15 +62,20 @@ class KPDataModule(pl.LightningDataModule):
         self.batch_size = cfg.train.batch_size
         self.num_workers = cfg.train.num_workers
 
-        self.train_path = self.get_relative('train_imgs/')
+        self.train_path = self.get_relative('train_crop/')
         self.test_path = self.get_relative('test_imgs/')
-        self.keypoint_path = self.get_relative('train_df.csv')
+        self.keypoint_path = self.get_relative('crop_df.csv')
         
         self.labels = pd.read_csv(self.keypoint_path).columns
         
         self.split_len = cfg.train.valid_split
         all_list = os.listdir(self.train_path)
-        all_list.sort()
+        data = pd.read_csv(self.keypoint_path).values
+        all_keypoints = {}
+        for d in data:
+            all_keypoints[d[0]] = [[d[2*i+1],d[2*i+2]] for i in range(cfg.data.num_keypoints)] 
+
+        random.shuffle(all_list)
 
         self.train_list = all_list[:self.split_len]
         self.valid_list = all_list[self.split_len:]
@@ -77,10 +84,8 @@ class KPDataModule(pl.LightningDataModule):
         self.test_list.sort()
 
 
-        data = pd.read_csv(self.keypoint_path).values
-        self.keypoints = [[[d[2*i+1]/4, d[2*i+2]/4] for i in range(cfg.data.num_keypoints)] for d in data]    #index 0 is name of image
-        self.train_keypoints = self.keypoints[:self.split_len]
-        self.valid_keypoints = self.keypoints[self.split_len:]
+        self.train_keypoints = {train_name:all_keypoints[train_name] for train_name in self.train_list}
+        self.valid_keypoints = {valid_name:all_keypoints[valid_name] for valid_name in self.valid_list}
         self.setup()
 
     def get_relative(self, path):
